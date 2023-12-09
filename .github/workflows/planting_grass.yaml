@@ -1,0 +1,36 @@
+name: planting_grass
+on:
+    workflow_dispatch: # want to be able to manually run this workflow from the UI
+
+    # Caution! github action schedule is not reliable. It can be delayed for 1 hour.
+    schedule: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+        - cron: "0 0 * * *" # The shortest interval you can run scheduled workflows is once every 5 minutes. (*/5 * * * *)
+
+permissions: write-all
+
+jobs:
+    update_board:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set timezone
+              uses: szenius/set-timezone@v1.2
+              with:
+                  timezoneLinux: "Asia/Seoul"
+
+            - name: Check out repository
+              uses: actions/checkout@v3 # https://github.com/marketplace/actions/checkout
+              with:
+                  repository: ${{ github.repository }}
+                  token: ${{ secrets.GH_PAT }}
+
+            - name: Update board.txt
+              run: echo $(date) >> board.txt
+
+            - name: Commit board.txt
+              run: |
+                  git config --global user.email "purple7714@naver.com"
+                  git config --global user.name "bora-jeong97"
+                  git add board.txt
+                  git commit -m "$(date) planting grass [skip ci]" 
+                  git push
+              # https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs
