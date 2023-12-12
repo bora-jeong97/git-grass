@@ -1,6 +1,12 @@
 name: planting_grass
 on:
     workflow_dispatch: # want to be able to manually run this workflow from the UI
+      inputs:
+        logLevel:
+            description: 'Log level'     
+            required: true
+            default: 'warning'
+
 
     # Caution! github action schedule is not reliable. It can be delayed for 1 hour.
     schedule: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
